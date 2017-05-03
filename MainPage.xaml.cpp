@@ -26,13 +26,19 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // Pour en savoir plus sur le modèle d'élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkId=234238
 
+//void ChronoThreadProc();
+//void actualizeDisplay(TextBlock^ chronoValue);
 
-int hours = 0, minutes = 0, seconds = 0;
+int hours, minutes, seconds;
+int running;
 std::mutex chrono_mutex;
 
 
 MainPage::MainPage()
 {
+	//mainThreadHandling = new MainClass();
+	running = 0;
+	hours = 0; minutes = 0; seconds = 0;
 	InitializeComponent();
 }
 
@@ -44,6 +50,7 @@ MainPage::MainPage()
 void MainPage::OnNavigatedTo(NavigationEventArgs^ e)
 {
 	(void) e;	// Paramètre non utilisé
+	chronoValue->Text = hours+":"+minutes+":"+seconds;
 
 	// TODO: préparer la page pour affichage ici.
 
@@ -54,62 +61,55 @@ void MainPage::OnNavigatedTo(NavigationEventArgs^ e)
 	// cet événement est géré automatiquement.
 }
 
-
-void ProjetSEP::MainPage::displayActualize() {
-	//TextBlock chronoValue = new TextBlock;//hours+":"+minutes+":"+seconds;
-	chronoValue->Text = hours + ":" + minutes + ":" + seconds;
-	//TextBox.Text = Replace();
+void ProjetSEP::MainPage::startChronoThread() {
+	running = 1;
+	//std::thread chronoThread(ChronoThreadProc);
+	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ChronoThreadProc, NULL, 0, NULL);
 }
 
-
-// Procédure utilisée par le thread
-DWORD WINAPI ProjetSEP::MainPage::ChronoThreadProc(MainPage^ arg)
+void ProjetSEP::MainPage::ChronoThreadProc()
 {
-	
+
 	// Pendant que le thread principal est en attente :
-	while (1) {
+	while (running) {
 		Sleep(1000);
 
 		chrono_mutex.lock();
-		if (seconds == 59) {
+		seconds++;
+		if (seconds == 60) {
 			seconds = 0;
 			minutes++;
 		}
-		if (minutes == 59) {
+		if (minutes == 60) {
 			minutes = 0;
 			hours++;
 		}
+		running = 0;
 		chrono_mutex.unlock();
 
-		// On actualise l'affichage
-		arg->displayActualize();
 	}
-
-
-	// On ferme, le thread va être arrèté par le système dès que cette fonction retournera
-	return 0;
 }
+
 
 
 void ProjetSEP::MainPage::startButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	//ThreadStart *myThreadDelegate = new ThreadStart(this, running);
-	//Thread *trd = new Thread(myThreadDelegate);
-	//CWinThread *m_pthread[5];
-	//DWORD ThreadId;
-	// On démarre le thread. ThreadId est l'identifiant du thread
-	// ThreadId ne nous est d'aucune utilité dans cet exmple car le thread se termine de lui même
-	//CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE) ChronoThreadProc, (LPVOID)this, 0, &ThreadId);
+	//mainThreadHandling->setRunning();
+	running = 1;
+	this->startChronoThread();
+	//mainThreadHandling->startactualizeDisplayThread(chronoValue);
 
-	std::thread chronoThread(ChronoThreadProc, this);
-	
+	/*
 	chronoThread.join();
+	chronoThread.join();
+	*/
 }
 
 
 void ProjetSEP::MainPage::button2_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-
+	//mainThreadHandling->setNotRunning();
+	running = 0;
 }
 
 

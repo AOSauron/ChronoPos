@@ -6,6 +6,11 @@
 #pragma once
 
 #include "MainPage.g.h"
+#include <windows.h>
+//#include "MainClass.h"
+
+using namespace Windows::UI::Xaml::Controls;
+
 
 namespace ProjetSEP
 {
@@ -19,13 +24,16 @@ namespace ProjetSEP
 
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
+
 	private:
-		void displayActualize();
-		static DWORD WINAPI ChronoThreadProc(MainPage^ lpParam);
+		//static DWORD WINAPI actualizeDisplay(MainPage^ page);
+		//void ChronoThreadProc();
 		void startButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void button2_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void running();
 		void textBlock1_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void textBlock_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		//MainClass* mainThreadHandling;
+		void startChronoThread();
+		static void ChronoThreadProc();
 	};
 }
