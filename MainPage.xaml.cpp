@@ -42,6 +42,7 @@ int hours, minutes, seconds;
 int running;
 int canBeActualized;
 std::mutex chrono_mutex;
+std::mutex gps_mutex;
 //Geolocator ^geolocator;
 String ^positionString;
 
@@ -265,8 +266,6 @@ void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xa
 	String ^minuteString;
 	String ^secondString;
 
-	positionString = "";
-
 	int accuracyInMeters = 5;
 
 	Geolocator^ geolocator = ref new Geolocator();
@@ -328,6 +327,8 @@ void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xa
 		secondString = seconds.ToString();
 	}
 
-	savedValues->Text = hourString + ":" + minuteString + ":" + secondString + " " + positionString + "\n" + savedValues->Text;
-	
+	String^ temp = savedValues->Text;
+	gps_mutex.lock();
+	savedValues->Text = hourString + ":" + minuteString + ":" + secondString + " " + positionString + "\n" + temp;
+	gps_mutex.unlock();
 }
