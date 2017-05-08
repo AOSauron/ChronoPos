@@ -264,6 +264,51 @@ void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xa
 	String ^hourString;
 	String ^minuteString;
 	String ^secondString;
+
+	positionString = "";
+
+	int accuracyInMeters = 5;
+
+	Geolocator^ geolocator = ref new Geolocator();
+
+	geolocator->DesiredAccuracyInMeters = (Platform::IBox<UINT>^)(PropertyValue::CreateUInt32(accuracyInMeters));
+
+	m_getOperation = geolocator->GetGeopositionAsync();
+
+	// Start location acquisition.
+	// Setting the completion callback implicitly starts acquisition.
+	m_getOperation->Completed = ref new AsyncOperationCompletedHandler<Geoposition^>(
+		[=](IAsyncOperation<Geoposition^>^ asyncOperation, AsyncStatus status) mutable
+	{
+		if (status != AsyncStatus::Error)
+		{
+			Geoposition^ geoposition = asyncOperation->GetResults();
+
+			// use the location information
+			double latitude = geoposition->Coordinate->Latitude;
+			double longitude = geoposition->Coordinate->Longitude;
+			double accuracy = geoposition->Coordinate->Accuracy;
+			//MyUseLocationFunction(latitude, longitude, accuracy);
+
+			positionString = "Latitude = " + latitude + ", Longitude = " + longitude + ", Précision = " + accuracy;
+		}
+		else
+		{
+			if (asyncOperation->ErrorCode.Value == E_ABORT)
+			{
+				// The user has disable location in the phone settings
+				// Printer : Activer les GPS pour acquisition
+				perror("Le GPS est desactivé");
+			}
+			else
+			{
+				// There was another error
+				// Printer : une erreur est survenue avec le GPS
+				perror("Une erreur est survenue avec le GPS");
+			}
+		}
+	});
+
 	if (hours < 10) {
 		hourString = "0" + hours.ToString();
 	}
@@ -284,6 +329,5 @@ void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xa
 	}
 
 	savedValues->Text = hourString + ":" + minuteString + ":" + secondString + " " + positionString + "\n" + savedValues->Text;
-
 	
 }

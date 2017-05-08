@@ -42,5 +42,6 @@ namespace ProjetSEP
 		void actualize(Platform::Object^ sender, Platform::Object^ e);
 		//void waitForActualize();
 		//void CALLBACK actualize(HWND hwnd, UINT uMsg, UINT timerId, DWORD dwTime);
+		Windows::Foundation::IAsyncOperation<Windows::Devices::Geolocation::Geoposition^>^ m_getOperation;
 	};
 }
