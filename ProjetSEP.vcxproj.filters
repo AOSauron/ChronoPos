@@ -2,7 +2,7 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Ressources">
-      <UniqueIdentifier>b712c9f5-a8f9-414d-bcce-8420df780131</UniqueIdentifier>
+      <UniqueIdentifier>fd5b0eb5-9133-4538-8955-ccfaf6722305</UniqueIdentifier>
       <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
     </Filter>
     <Image Include="Assets\Logo.scale-240.png">

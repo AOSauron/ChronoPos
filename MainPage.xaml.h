@@ -26,14 +26,21 @@ namespace ProjetSEP
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 
 	private:
+
 		//static DWORD WINAPI actualizeDisplay(MainPage^ page);
 		//void ChronoThreadProc();
 		void startButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void button2_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void textBlock1_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void textBlock_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void initializeButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		//MainClass* mainThreadHandling;
 		void startChronoThread();
 		static void ChronoThreadProc();
+		/*void startGPSThread();
+		static void GPSThreadProc();*/
+		//void startActualizeDisplay();
+		//static void ActualizeDisplay(MainPage^ page);
+		void actualize(Platform::Object^ sender, Platform::Object^ e);
+		//void waitForActualize();
+		//void CALLBACK actualize(HWND hwnd, UINT uMsg, UINT timerId, DWORD dwTime);
 	};
 }

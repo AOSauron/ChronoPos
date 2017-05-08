@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
 
-  <Identity Name="d20c9c4e-12bf-4e10-8021-5abfce9d7267"
-            Publisher="CN=aip-winphone"
+  <Identity Name="aac42bfe-cd85-4d59-9a71-44702f0c5074"
+            Publisher="CN=gauth"
             Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="d20c9c4e-12bf-4e10-8021-5abfce9d7267" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="aac42bfe-cd85-4d59-9a71-44702f0c5074" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>ProjetSEP</DisplayName>
-    <PublisherDisplayName>aip-winphone</PublisherDisplayName>
+    <PublisherDisplayName>gauth</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
