@@ -14,6 +14,6 @@
         <Button x:Name="initializeButton" Content="Réinitialiser" HorizontalAlignment="Left" Margin="263,125,0,0" VerticalAlignment="Top" Click="initializeButton_Click" Height="66" Width="120"/>
         <TextBlock x:Name="chronoValue" Text="00:00:00" HorizontalAlignment="Left" Margin="107,274,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="65" Width="194" FontSize="50" RenderTransformOrigin="0.461,0.436"/>
 
-        <TextBlock x:Name="savedValues" Text="" HorizontalAlignment="Left" Margin="120,350,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="215" Width="194" FontSize="30" RenderTransformOrigin="0.461,0.436"/>
+        <TextBlock x:Name="savedValues" TextAlignment="Center" Text="" HorizontalAlignment="Left" Margin="50,350,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="215" Width="300" FontSize="30" RenderTransformOrigin="0.461,0.436"/>
     </Grid>
 </Page>
