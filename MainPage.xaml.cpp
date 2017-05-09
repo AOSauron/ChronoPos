@@ -31,6 +31,8 @@ using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::Devices::Geolocation;
 using namespace Windows::UI::Core;
+using namespace Windows::System;
+using namespace Windows::System::Display;
 
 
 // Pour en savoir plus sur le modèle d'élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkId=234238
@@ -257,6 +259,9 @@ void MainPage::initializeButton_Click(Platform::Object^ sender, Windows::UI::Xam
 	minutes = 0;
 	seconds = 0;
 	chronoValue->Text = "00:00:00";
+	startButton->Content = "Démarrer";
+	savedValues->Text = "";
+	positionString = "Nan";
 }
 
  
@@ -287,9 +292,9 @@ void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xa
 			double latitude = geoposition->Coordinate->Latitude;
 			double longitude = geoposition->Coordinate->Longitude;
 			double accuracy = geoposition->Coordinate->Accuracy;
-			//MyUseLocationFunction(latitude, longitude, accuracy);
 
-			positionString = "Latitude = " + latitude + ", Longitude = " + longitude + ", Précision = " + accuracy;
+			//positionString = "Lat. " + latitude + ", Long. " + longitude + ", Précision = " + accuracy;
+			positionString = "Lat. " + latitude + ", Long. " + longitude;
 		}
 		else
 		{
@@ -326,7 +331,9 @@ void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xa
 	else {
 		secondString = seconds.ToString();
 	}
-
+	
+	positionString = "\n Lat. 2566\n Long. 3648";
+	
 	String^ temp = savedValues->Text;
 	gps_mutex.lock();
 	savedValues->Text = hourString + ":" + minuteString + ":" + secondString + " " + positionString + "\n" + temp;
