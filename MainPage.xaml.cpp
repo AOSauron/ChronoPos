@@ -300,12 +300,15 @@ void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xa
 		{
 			if (asyncOperation->ErrorCode.Value == E_ABORT)
 			{
+				positionString = "GPS DESACTIVE";
 				// The user has disable location in the phone settings
 				// Printer : Activer les GPS pour acquisition
 				perror("Le GPS est desactivé");
 			}
 			else
 			{
+				// L EMULATION SORT ICI !!!!!!
+				positionString = "ERREUR GPS";
 				// There was another error
 				// Printer : une erreur est survenue avec le GPS
 				perror("Une erreur est survenue avec le GPS");
@@ -332,7 +335,7 @@ void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xa
 		secondString = seconds.ToString();
 	}
 	
-	positionString = "\n Lat. 2566\n Long. 3648";
+	//positionString = "\n Lat. 2566\n Long. 3648";
 	
 	String^ temp = savedValues->Text;
 	gps_mutex.lock();
