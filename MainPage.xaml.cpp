@@ -13,9 +13,10 @@
 #include <mutex>
 #include <thread>
 //#include <chrono>
-//#include "stdfax.h"
 #include <future>
 #include <ctime>
+#include <Synchapi.h>
+#include <map>
 
 using namespace ProjetSEP;
 
@@ -34,6 +35,8 @@ using namespace Windows::Devices::Geolocation;
 using namespace Windows::UI::Core;
 using namespace Windows::System;
 using namespace Windows::System::Display;
+using namespace Windows::Devices::Geolocation;
+using namespace Windows::UI::Xaml::Shapes;
 
 
 // Pour en savoir plus sur le modèle d'élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkId=234238
@@ -41,11 +44,15 @@ using namespace Windows::System::Display;
 
 int hours, minutes, seconds;
 int running;
+double latitude;
+double longitude;
+double accuracy;
 std::mutex chrono_mutex;
 std::mutex gps_mutex;
 String ^positionString;
+String ^notice;
 time_t currentTime;
-
+bool display = false;
 
 
 MainPage::MainPage()
@@ -57,6 +64,10 @@ MainPage::MainPage()
 	InitializeComponent();
 
 	startGPSThread();
+
+	savedValues1->HorizontalScrollBarVisibility = ScrollBarVisibility::Auto;
+	Map->MapServiceToken = "AhpwUAwhvD2ERlgATrwVrsMsHWgE9YYlxVBLyHBUbyJgXdkGbQoqnKI6jEDbbK9s";
+
 }
 
 /// <summary>
@@ -110,6 +121,7 @@ void MainPage::startGPSThread() {
 	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)GPSThreadProc, NULL, 0, NULL);
 }
 
+
 void MainPage::GPSThreadProc()
 {
 	while (1) {
@@ -130,11 +142,11 @@ void MainPage::GPSThreadProc()
 			if (status != AsyncStatus::Error)
 			{
 				Geoposition^ geoposition = asyncOperation->GetResults();
-
+				display = true;
 				// use the location information
-				double latitude = geoposition->Coordinate->Latitude;
-				double longitude = geoposition->Coordinate->Longitude;
-				double accuracy = geoposition->Coordinate->Accuracy;
+				latitude = geoposition->Coordinate->Latitude;
+				longitude = geoposition->Coordinate->Longitude;
+				accuracy = geoposition->Coordinate->Accuracy;
 
 				gps_mutex.lock();
 				positionString = "(" + latitude + " ; " + longitude + ")";
@@ -181,10 +193,26 @@ void MainPage::actualize(Platform::Object^ sender, Platform::Object^ e) {
 	else {
 		secondString = seconds.ToString();
 	}
-
 	chronoValue->Text = hourString + ":" + minuteString + ":" + secondString;
+
+	if (display) appTitle->Text = "GPS initialisé. Allez dans l'onglet GPS pour voir vos positions sauvegardées.";
+	else appTitle->Text = "Initialisation du GPS...";
+
+	//Maj de la position quand le chrono tourne.
+	BasicGeoposition geop;
+	geop.Latitude = latitude;
+	geop.Longitude = longitude;
+	Map->Center = ref new Geopoint(geop);
+	Map->ZoomLevel = 15;
+	Map->LandmarksVisible = true;
 }
 
+void MainPage::actualizeDisplay(Platform::Object^ sender, Platform::Object^ e)
+{
+
+	if (display) appTitle->Text = "GPS initialisé. Allez dans l'onglet GPS pour voir vos positions sauvegardées.";
+	else appTitle->Text = "Initialisation du GPS...";
+}
 
 void MainPage::startButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
@@ -220,15 +248,17 @@ void MainPage::initializeButton_Click(Platform::Object^ sender, Windows::UI::Xam
 	startButton->Content = "Démarrer";
 	savedValues->Text = "";
 	positionString = "Nan";
+	appTitle->Text = "";
 }
 
  
-void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e) {
+void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e) 
+{
 	if (positionString != "") {
+		appTitle->Text = "GPS initialisé. Allez dans l'onglet GPS pour voir vos positions sauvegardées.";
 		String ^hourString;
 		String ^minuteString;
 		String ^secondString;
-
 
 		if (hours < 10) {
 			hourString = "0" + hours.ToString();
@@ -251,7 +281,37 @@ void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xa
 
 		String^ temp = savedValues->Text;
 		gps_mutex.lock();
-		savedValues->Text = hourString + ":" + minuteString + ":" + secondString + "\n" + positionString + "\n" + temp;
+		savedValues->Text = hourString + ":" + minuteString + ":" + secondString + "  " + positionString + "\n" + temp;
 		gps_mutex.unlock();
+
+		BasicGeoposition geop;
+		geop.Latitude = latitude;
+		geop.Longitude = longitude;
+		Geopoint ^geopoint = ref new Geopoint(geop);
+		Ellipse element;
+		Map->Center = geopoint;
+
+		Map->SetLocation(Map, geopoint);
+		Map->TrySetViewAsync(geopoint);
+		Map->ZoomLevel = 15;
 	}
+	else {
+		appTitle->Text = "Initialisation du GPS...";
+	}
+
+}
+
+void MainPage::appTitle_SelectionChanged()
+{
+
+}
+void MainPage::savedValues1_ViewChanged()
+{
+
+}
+
+// 2e bouton save
+void ProjetSEP::MainPage::saveButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	getPositionButton_Click(sender, e);
 }

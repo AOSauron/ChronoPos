@@ -33,5 +33,9 @@ namespace ProjetSEP
 		void startGPSThread();
 		static void GPSThreadProc();
 		void actualize(Platform::Object^ sender, Platform::Object^ e);
+		void appTitle_SelectionChanged();
+		void savedValues1_ViewChanged();
+		void actualizeDisplay(Platform::Object^ sender, Platform::Object^ e);
+		void saveButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }
