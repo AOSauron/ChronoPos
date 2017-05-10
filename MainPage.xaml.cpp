@@ -12,9 +12,10 @@
 #include <tchar.h>
 #include <mutex>
 #include <thread>
-#include <chrono>
+//#include <chrono>
 //#include "stdfax.h"
 #include <future>
+#include <ctime>
 
 using namespace ProjetSEP;
 
@@ -40,11 +41,10 @@ using namespace Windows::System::Display;
 
 int hours, minutes, seconds;
 int running;
-int canBeActualized;
 std::mutex chrono_mutex;
 std::mutex gps_mutex;
 String ^positionString;
-
+time_t currentTime;
 
 
 
@@ -52,7 +52,6 @@ MainPage::MainPage()
 {
 	running = 0;
 	hours = 0; minutes = 0; seconds = 0;
-	canBeActualized = 0;
 	positionString = "";
 
 	InitializeComponent();
@@ -86,22 +85,24 @@ void MainPage::startChronoThread() {
 
 void MainPage::ChronoThreadProc()
 {
-	Sleep(1000);
+	time_t newTime;
+	currentTime = time(0);
 	while (running) {
-		
-		chrono_mutex.lock();
-		seconds++;
-		if (seconds == 60) {
-			seconds = 0;
-			minutes++;
+		newTime = time(0);
+		if (difftime(newTime, currentTime) >= 1.0) {
+			chrono_mutex.lock();
+			seconds++;
+			if (seconds == 60) {
+				seconds = 0;
+				minutes++;
+			}
+			if (minutes == 60) {
+				minutes = 0;
+				hours++;
+			}
+			chrono_mutex.unlock();
+			currentTime = newTime;
 		}
-		if (minutes == 60) {
-			minutes = 0;
-			hours++;
-		}
-		canBeActualized = 1;
-		chrono_mutex.unlock();
-		Sleep(1000);
 	}
 }
 
@@ -135,25 +136,19 @@ void MainPage::GPSThreadProc()
 				double longitude = geoposition->Coordinate->Longitude;
 				double accuracy = geoposition->Coordinate->Accuracy;
 
-				//positionString = "Lat. " + latitude + ", Long. " + longitude + ", Précision = " + accuracy;
 				gps_mutex.lock();
-				positionString = "(" + latitude + " ; " + longitude + ")";//"Lat. " + latitude + ", Long. " + longitude;
+				positionString = "(" + latitude + " ; " + longitude + ")";
 				gps_mutex.unlock();
 			}
 			else
 			{
 				if (asyncOperation->ErrorCode.Value == E_ABORT)
 				{
-					//positionString = "GPS DESACTIVE";
-					// The user has disable location in the phone settings
-					// Printer : Activer les GPS pour acquisition
 					perror("Le GPS est desactivé");
 				}
 				else
 				{
-					// L EMULATION SORT ICI !!!!!!
 					positionString = "ERREUR GPS";
-					// There was another error
 					// Printer : une erreur est survenue avec le GPS
 					perror("Une erreur est survenue avec le GPS");
 				}
@@ -253,8 +248,6 @@ void MainPage::getPositionButton_Click(Platform::Object^ sender, Windows::UI::Xa
 		else {
 			secondString = seconds.ToString();
 		}
-
-		//positionString = "\n Lat. 2566\n Long. 3648";
 
 		String^ temp = savedValues->Text;
 		gps_mutex.lock();
