@@ -26,7 +26,7 @@ Une fois que Visual Studio 2015 est lancé, ouvrez le fichier `Sources/ProjetSEP
 
 ### Principe de l'application
 L'application consiste en une interface multithreadée gérant un chronomètre et un GPS. Il y a 3 threads : Le thread principal qui gère l'interface graphique (constituée d'un pivot de 3 vues, d'une map, q'une ScrollViewer pour les données sauvées, un  Textblock "chronomètre" qui s'incrémente), un thread qui s'occupe de gérer le compteur avec un DispatchTimer, et un thread infini lancé dès le début qui initialise le GPS et actualise en temps réel la position.
-Le but du développement de cette appli est de nous inicier à la programmation Windows embarquée. L'appli est développée en C++ à partir de Microsoft Visual Studio 2015.
+Le but du développement de cette appli est de nous inicier à la programmation Windows embarquée. L'appli est développée en C++ à partir de Microsoft Visual Studio 2015 avec le SDK Windows phone 8.1.
 
 ### Présentation du projet
 Le support de la soutenance du 11/05/2017 est disponible dans le fichier [Docs/présentation.odp](Docs/présentation.odp)
